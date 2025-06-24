@@ -1,0 +1,23 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Dog Walkers</h2>
+<a href="{{ url_for('add_walker') }}">Add Walker</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Avail.</th>
+        <th>Actions</th>
+    </tr>
+    {% for w in walkers %}
+    <tr>
+        <td>{{ w.name }}</td>
+        <td>{{ w.phone }}</td>
+        <td><a href="{{ url_for('manage_availability', entity='walker', entity_id=w.id) }}">
+            {{ w.availabilities|length }} slots</a></td>
+        <td><a href="{{ url_for('edit_walker', walker_id=w.id) }}">Edit</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

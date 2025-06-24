@@ -1,0 +1,25 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Dogs</h2>
+<a href="{{ url_for('add_dog') }}">Add Dog</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Breed</th>
+        <th>Owner</th>
+        <th>Avail.</th>
+        <th>Actions</th>
+    </tr>
+    {% for d in dogs %}
+    <tr>
+        <td>{{ d.name }}</td>
+        <td>{{ d.breed }}</td>
+        <td>{{ d.owner.name }}</td>
+        <td><a href="{{ url_for('manage_availability', entity='dog', entity_id=d.id) }}">
+            {{ d.availabilities|length }} slots</a></td>
+        <td><a href="{{ url_for('edit_dog', dog_id=d.id) }}">Edit</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

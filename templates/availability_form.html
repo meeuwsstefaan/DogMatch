@@ -1,0 +1,28 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Add Availability for {{ obj.name }}</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.weekday.label }} {{ form.weekday() }}<br>
+    {{ form.start_time.label }} {{ form.start_time() }}<br>
+    {{ form.end_time.label }} {{ form.end_time() }}<br>
+    {{ form.submit() }}
+</form>
+
+<h3>Existing slots</h3>
+<table>
+    <tr>
+        <th>Day</th>
+        <th>Start</th>
+        <th>End</th>
+    </tr>
+    {% for a in obj.availabilities %}
+    <tr>
+        <td>{{ ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][a.weekday] }}</td>
+        <td>{{ a.start_time.strftime('%H:%M') }}</td>
+        <td>{{ a.end_time.strftime('%H:%M') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

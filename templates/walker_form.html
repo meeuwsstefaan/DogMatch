@@ -1,0 +1,11 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ 'Edit' if form.name.data else 'Add' }} Walker</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=32) }}<br>
+    {{ form.phone.label }} {{ form.phone(size=32) }}<br>
+    {{ form.submit() }}
+</form>
+{% endblock %}

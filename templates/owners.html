@@ -1,0 +1,22 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Dog Owners</h2>
+<a href="{{ url_for('add_owner') }}">Add Owner</a>
+<table>
+    <tr>
+        <th>Name</th>
+        <th>E-mail</th>
+        <th>Actions</th>
+    </tr>
+    {% for o in owners %}
+    <tr>
+        <td>{{ o.name }}</td>
+        <td>{{ o.email }}</td>
+        <td>
+            <a href="{{ url_for('edit_owner', owner_id=o.id) }}">Edit</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

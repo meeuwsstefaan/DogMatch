@@ -1,0 +1,12 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>{{ 'Edit' if form.name.data else 'Add' }} Dog</h2>
+<form method="post">
+    {{ form.hidden_tag() }}
+    {{ form.name.label }} {{ form.name(size=32) }}<br>
+    {{ form.breed.label }} {{ form.breed(size=32) }}<br>
+    {{ form.owner_id.label }} {{ form.owner_id() }}<br>
+    {{ form.submit() }}
+</form>
+{% endblock %}

@@ -1,0 +1,27 @@
+<!-- HTML -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>DogMatch</title>
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+<nav>
+    <a href="{{ url_for('home') }}">Home</a> |
+    <a href="{{ url_for('owners') }}">Owners</a> |
+    <a href="{{ url_for('dogs') }}">Dogs</a> |
+    <a href="{{ url_for('walkers') }}">Walkers</a> |
+    <a href="{{ url_for('match') }}">Match</a>
+</nav>
+<hr>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, msg in messages %}
+<div class="flash {{ category }}">{{ msg }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+{% block content %}{% endblock %}
+</body>
+</html>

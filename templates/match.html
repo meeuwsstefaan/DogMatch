@@ -1,0 +1,27 @@
+<!-- HTML -->
+{% extends "layout.html" %}
+{% block content %}
+<h2>Matching Slots</h2>
+{% if matches %}
+<table>
+    <tr>
+        <th>Dog</th>
+        <th>Walker</th>
+        <th>Day</th>
+        <th>Start</th>
+        <th>End</th>
+    </tr>
+    {% for dog, walker, weekday, start, end in matches %}
+    <tr>
+        <td>{{ dog.name }} ({{ dog.owner.name }})</td>
+        <td>{{ walker.name }}</td>
+        <td>{{ ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][weekday] }}</td>
+        <td>{{ start.strftime('%H:%M') }}</td>
+        <td>{{ end.strftime('%H:%M') }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No overlapping slots found.</p>
+{% endif %}
+{% endblock %}

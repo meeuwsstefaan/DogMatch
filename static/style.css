@@ -1,0 +1,27 @@
+/* CSS */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0 2rem;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px 8px;
+}
+
+tr:nth-child(even) {
+    background: #f6f6f6;
+}
+
+nav a {
+    margin-right: .5rem;
+}
+
+.flash.success {
+    color: green;
+}
