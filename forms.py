@@ -44,11 +44,12 @@ class WalkerForm(FlaskForm):
 class AvailabilityForm(FlaskForm):
     weekday = SelectField("Weekday", coerce=int, choices=WEEKDAYS)
     start_time = TimeField("Start", default=dt.time(9, 0))
-    end_time = TimeField("End", default=dt.time(17, 0))
+    end_time   = TimeField("End",   default=dt.time(17, 0))
     submit = SubmitField("Add")
 
-    def validate(self, extra=None):
-        rv = super().validate()
+    # WTForms 3.x passes 'extra_validators', so we must accept it.
+    def validate(self, extra_validators=None):
+        rv = super().validate(extra_validators=extra_validators)
         if not rv:
             return False
         if self.start_time.data >= self.end_time.data:
