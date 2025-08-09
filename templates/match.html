@@ -5,19 +5,19 @@
 {% if matches %}
 <table class="table table-striped table-centered">
     <tr>
-        <th>Dog</th>
+        <th>Dog (Owner)</th>
         <th>Walker</th>
         <th>Day</th>
         <th>Start</th>
         <th>End</th>
     </tr>
-    {% for dog, walker, weekday, start, end in matches %}
+    {% for match in matches %}
     <tr>
-        <td>{{ dog.name }} ({{ dog.owner.name }})</td>
-        <td>{{ walker.name }}</td>
-        <td>{{ ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][weekday] }}</td>
-        <td>{{ start.strftime('%H:%M') }}</td>
-        <td>{{ end.strftime('%H:%M') }}</td>
+        <td>{{ match[0].name }} ({{ match[0].owner.name }})</td>
+        <td>{{ match[1].name }}</td>
+        <td>{{ ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][match[2]] }}</td>
+        <td>{{ match[3] }}</td>
+        <td>{{ match[4] }}</td>
     </tr>
     {% endfor %}
 </table>

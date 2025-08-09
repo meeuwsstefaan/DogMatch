@@ -23,9 +23,10 @@ def create_app():
     Migrate(app, db)
     return app
 
-
 app = create_app()
 
+if __name__ == "__main__":
+    app.run(debug=True)
 
 # ------------------------------------------------------------------ Routes ---
 
