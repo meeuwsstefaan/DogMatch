@@ -1,0 +1,15 @@
+/* Center the table block itself */
+.table-centered {
+    margin: 0 auto;          /* left/right auto → centered */
+    width: auto;             /* shrink to fit content    */
+}
+
+/* Prevent cells from stretching unnecessarily */
+.table-centered th,
+.table-centered td {
+    white-space: nowrap;     /* stay on one line          */
+}
+
+.table-matching-slots {
+    background-color: #30799B;
+}

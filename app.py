@@ -37,7 +37,7 @@ def home():
 # Owner CRUD
 @app.route("/owners")
 def owners():
-    owners = DogOwner.query.all()
+    owners = DogOwner.query.order_by(DogOwner.name.asc()).all()
     return render_template("owners.html", owners=owners)
 
 
@@ -68,7 +68,7 @@ def edit_owner(owner_id):
 # Dog CRUD
 @app.route("/dogs")
 def dogs():
-    dogs = Dog.query.all()
+    dogs = Dog.query.order_by(Dog.name.asc()).all()
     return render_template("dogs.html", dogs=dogs)
 
 
@@ -99,11 +99,27 @@ def edit_dog(dog_id):
         return redirect(url_for("dogs"))
     return render_template("dog_form.html", form=form)
 
+@app.route("/walkers/<int:walker_id>/delete", methods=["POST"])
+def delete_walker(walker_id):
+    walker = DogWalker.query.get_or_404(walker_id)
+    db.session.delete(walker)
+    db.session.commit()
+    flash("Dog walker deleted successfully", "success")
+    return redirect(url_for("walkers"))
+
+@app.route("/dogs/<int:dog_id>/delete", methods=["POST"])
+def delete_dog(dog_id):
+    dog = Dog.query.get_or_404(dog_id)
+    db.session.delete(dog)
+    db.session.commit()
+    flash("Dog deleted successfully", "success")
+    return redirect(url_for("dogs"))
+
 
 # Walker CRUD
 @app.route("/walkers")
 def walkers():
-    walkers = DogWalker.query.all()
+    walkers = DogWalker.query.order_by(DogWalker.name.asc()).all()
     return render_template("walkers.html", walkers=walkers)
 
 
@@ -188,4 +204,5 @@ def match():
                         start = max(da.start_time, wa.start_time)
                         end = min(da.end_time, wa.end_time)
                         matches.append((dog, walker, da.weekday, start, end))
+    matches.sort(key=lambda x: (x[0].name.lower()))
     return render_template("match.html", matches=matches)

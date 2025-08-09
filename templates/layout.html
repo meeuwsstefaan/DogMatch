@@ -1,10 +1,10 @@
-<!-- HTML -->
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8"/>
     <title>DogMatch</title>
     <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/custom.css') }}" rel="stylesheet"> <!-- Added -->
 </head>
 <body>
 <nav>
@@ -16,11 +16,13 @@
 </nav>
 <hr>
 {% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, msg in messages %}
-<div class="flash {{ category }}">{{ msg }}</div>
-{% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for category, msg in messages %}
+            <div class="alert alert-{{ category }}" role="alert">
+                {{ msg }}
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endwith %}
 {% block content %}{% endblock %}
 </body>
