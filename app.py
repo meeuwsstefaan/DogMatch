@@ -67,6 +67,14 @@ def edit_owner(owner_id):
     return render_template("owner_form.html", form=form)
 
 
+@app.route("/owners/<int:owner_id>/delete", methods=["POST"])
+def delete_owner(owner_id):
+    owner = DogOwner.query.get_or_404(owner_id)
+    db.session.delete(owner)
+    db.session.commit()
+    flash("Owner deleted successfully", "success")
+    return redirect(url_for("owners"))
+
 # Dog CRUD
 @app.route("/dogs")
 def dogs():
