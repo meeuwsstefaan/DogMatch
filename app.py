@@ -166,10 +166,8 @@ def manage_availability(entity, entity_id):
     form = AvailabilityForm()
     if entity == "dog":
         obj = Dog.query.get_or_404(entity_id)
-        # redirect_endpoint = "dogs"
     else:
         obj = DogWalker.query.get_or_404(entity_id)
-        # redirect_endpoint = "walkers"
 
     if form.validate_on_submit():
         avail = Availability(
@@ -182,7 +180,9 @@ def manage_availability(entity, entity_id):
         db.session.add(avail)
         db.session.commit()
         flash("Availability added", "success")
-        # return redirect(url_for(redirect_endpoint))
+
+        # Sort the availabilities by weekday
+        obj.availabilities.sort(key=lambda a: a.weekday)
 
         # Instead of redirecting, return the form again with the success message
         return render_template(
@@ -196,7 +196,6 @@ def manage_availability(entity, entity_id):
     return render_template(
         "availability_form.html",
         form=AvailabilityForm(),
-        # form=form,
         entity=entity,
         obj=obj
     )
