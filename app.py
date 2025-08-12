@@ -1,7 +1,7 @@
 # Python
 from flask import (
     Flask, render_template, redirect, url_for,
-    flash
+    flash, request
 )
 from flask_migrate import Migrate
 
@@ -26,7 +26,7 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="192.168.129.2", port=5000, debug=True)
     # app.run(debug=True)
 
 # ------------------------------------------------------------------ Routes ---
@@ -166,10 +166,10 @@ def manage_availability(entity, entity_id):
     form = AvailabilityForm()
     if entity == "dog":
         obj = Dog.query.get_or_404(entity_id)
-        redirect_endpoint = "dogs"
+        # redirect_endpoint = "dogs"
     else:
         obj = DogWalker.query.get_or_404(entity_id)
-        redirect_endpoint = "walkers"
+        # redirect_endpoint = "walkers"
 
     if form.validate_on_submit():
         avail = Availability(
@@ -182,15 +182,38 @@ def manage_availability(entity, entity_id):
         db.session.add(avail)
         db.session.commit()
         flash("Availability added", "success")
-        return redirect(url_for(redirect_endpoint))
+        # return redirect(url_for(redirect_endpoint))
+
+        # Instead of redirecting, return the form again with the success message
+        return render_template(
+            "availability_form.html",
+            form=form,
+            entity=entity,
+            obj=obj,
+            success="Availability added"
+        )
 
     return render_template(
         "availability_form.html",
-        form=form,
+        form=AvailabilityForm(),
+        # form=form,
         entity=entity,
         obj=obj
     )
 
+
+@app.route("/availability/<int:availability_id>/delete", methods=["POST"])
+def delete_availability(availability_id):
+    # Look up the availability entry
+    availability = Availability.query.get_or_404(availability_id)
+
+    # Delete the entry
+    db.session.delete(availability)
+    db.session.commit()
+
+    # Flash the success message and redirect back to the referring page
+    flash("Availability deleted successfully", "success")
+    return redirect(request.referrer or url_for("home"))
 
 # Matching --------------------------------------------------------------------
 
