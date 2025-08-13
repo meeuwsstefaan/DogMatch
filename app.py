@@ -1,4 +1,3 @@
-# Python
 from datetime import timedelta, datetime
 
 from flask import (
@@ -11,9 +10,10 @@ from forms import (
     OwnerForm, DogForm, WalkerForm,
     AvailabilityForm
 )
-from models import db, DogOwner, Dog, DogWalker, Availability
+from models import db, DogOwner, Dog, DogWalker, Availability, Matches, ConfirmedMatches
 
 MINIMUM_OVERLAP_MINUTES = 15
+
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -33,7 +33,38 @@ if __name__ == "__main__":
     app.debug = False
     app.run(host="192.168.129.2", port=5000, debug=False)
 
+
 # ------------------------------------------------------------------ Routes ---
+
+@app.route("/confirmed_matches", methods=["GET"])
+def confirmed_matches():
+    confirmed_matches = ConfirmedMatches.query.all()
+    return render_template("confirmed_matches.html", confirmed_matches=confirmed_matches)
+
+
+@app.route("/matches/<int:match_id>/confirm", methods=["POST"])
+def confirm_match(match_id):
+    match = Matches.query.get_or_404(match_id)  # Get the match to be confirmed
+    print(f"Match to confirm: {match.field1}, {match.field2}")  # Debugging print
+
+    # Re-add to the session if necessary (to avoid being detached)
+    db.session.add(match)
+
+    # Add it to the ConfirmedMatches table
+    confirmed_match = ConfirmedMatches(field1=match.field1, field2=match.field2)
+    db.session.add(confirmed_match)
+    print("Added to ConfirmedMatches table.")
+
+    # Remove from the Matches table
+    db.session.delete(match)
+    print(f"Match removed from Matches table: {match.field1}, {match.field2}")
+
+    db.session.commit()
+    print("Committed to DB.")
+
+    flash("Match confirmed and moved to Confirmed Matches table.", "success")
+    return redirect(url_for("match"))  # Redirect back to Matches view
+
 
 @app.route("/")
 def home():
@@ -52,7 +83,7 @@ def owners():
 def add_owner():
     form = OwnerForm()
     if form.validate_on_submit():
-        owner = DogOwner(name=form.name.data, email=form.email.data)
+        owner = DogOwner(name=form.name.data, email=form.email.data, phone=form.phone.data)
         db.session.add(owner)
         db.session.commit()
         flash("Owner added", "success")
@@ -249,7 +280,11 @@ def overlaps(a_start, a_end, b_start, b_end):
 
 @app.route("/match")
 def match():
-    matches = []  # list of (dog, walker, weekday, start, end)
+    # Clear the Matches table before repopulating it
+    Matches.query.delete()
+    db.session.commit()
+
+    matches = []  # list of dictionaries
     dogs = Dog.query.all()
     walkers = DogWalker.query.all()
 
@@ -262,6 +297,24 @@ def match():
                     ):
                         start = max(da.start_time, wa.start_time)
                         end = min(da.end_time, wa.end_time)
-                        matches.append((dog, walker, da.weekday, start, end))
-    matches.sort(key=lambda x: (x[0].name.lower()))
+
+                        # Add to the Matches table in the database
+                        match = Matches(
+                            field1=dog.name,  # Replace with actual fields
+                            field2=walker.name  # Replace with actual fields
+                        )
+                        db.session.add(match)
+                        db.session.flush()  # Need to flush to get the match ID
+
+                        matches.append({
+                            "id": match.id,  # Use the ID from the database
+                            "dog": dog,
+                            "walker": walker,
+                            "weekday": da.weekday,
+                            "start_time": start,
+                            "end_time": end,
+                        })
+
+    db.session.commit()  # Commit all matches to DB
+    matches.sort(key=lambda x: x["dog"].name.lower())
     return render_template("match.html", matches=matches)

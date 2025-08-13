@@ -13,16 +13,17 @@
     <a href="{{ url_for('dogs') }}">Dogs</a> |
     <a href="{{ url_for('walkers') }}">Walkers</a> |
     <a href="{{ url_for('match') }}">Match</a>
+    <a href="{{ url_for('confirmed_matches') }}">Confirmed Matches</a>
 </nav>
 <hr>
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, msg in messages %}
-            <div class="alert alert-{{ category }}" role="alert">
-                {{ msg }}
-            </div>
-        {% endfor %}
-    {% endif %}
+{% if messages %}
+{% for category, msg in messages %}
+<div class="alert alert-{{ category }}" role="alert">
+    {{ msg }}
+</div>
+{% endfor %}
+{% endif %}
 {% endwith %}
 {% block content %}
 {% endblock %}

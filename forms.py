@@ -18,6 +18,7 @@ WEEKDAYS = [(i, day) for i, day in enumerate(
 class OwnerForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     email = StringField("E-mail")
+    phone = StringField("Phone")  # Added phone field
     submit = SubmitField("Save")
 
 
@@ -44,7 +45,7 @@ class WalkerForm(FlaskForm):
 class AvailabilityForm(FlaskForm):
     weekday = SelectField("Weekday", coerce=int, choices=WEEKDAYS)
     start_time = TimeField("Start", default=dt.time(9, 0))
-    end_time   = TimeField("End",   default=dt.time(17, 0))
+    end_time = TimeField("End", default=dt.time(17, 0))
     submit = SubmitField("Add")
 
     # WTForms 3.x passes 'extra_validators', so we must accept it.

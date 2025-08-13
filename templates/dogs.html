@@ -11,7 +11,7 @@
     <tr>
         <th>Name</th>
         <th>Breed</th>
-        <th>Owner</th>
+        <th>Owner (Phone)</th> <!-- Renamed column header -->
         <th>Avail.</th> <!-- Updated Column for Availability -->
         <th>Actions</th>
     </tr>
@@ -20,7 +20,7 @@
     <tr>
         <td>{{ dog.name }}</td>
         <td>{{ dog.breed }}</td>
-        <td>{{ dog.owner.name }}</td>
+        <td>{{ dog.owner.name }} ({{ dog.owner.phone }})</td>
         <td>
             <!-- Updated: Show Number of Availability Slots as Link -->
             <a href="{{ url_for('manage_availability', entity='dog', entity_id=dog.id) }}">

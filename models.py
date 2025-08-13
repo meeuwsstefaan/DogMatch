@@ -4,10 +4,24 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
+# models.py
+class Matches(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    field1 = db.Column(db.String(100))  # Placeholder: Replace with actual fields
+    field2 = db.Column(db.String(100))  # Placeholder: Replace with actual fields
+
+
+class ConfirmedMatches(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    field1 = db.Column(db.String(100))  # Same fields as Matches
+    field2 = db.Column(db.String(100))  # Same fields as Matches
+
+
 class DogOwner(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120))
+    phone = db.Column(db.String(40))
 
     dogs = db.relationship("Dog", backref="owner", cascade="all, delete-orphan")
 
