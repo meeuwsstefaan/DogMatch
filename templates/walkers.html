@@ -4,12 +4,17 @@
 <h2>Dog Walkers</h2>
 <a href="{{ url_for('add_walker') }}">Add Walker</a>
 <table class="table table-striped table-centered">
+    <thead>
+    <tr>
+        <th colspan="4">Walkers</th>
+    </tr>
     <tr>
         <th>Name</th>
         <th>Phone</th>
         <th>Avail.</th>
         <th>Actions</th>
     </tr>
+    </thead>
     {% for walker in walkers %}
     <tr>
         <td>{{ walker.name }}</td>

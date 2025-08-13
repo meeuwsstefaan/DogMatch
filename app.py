@@ -1,4 +1,6 @@
 # Python
+from datetime import timedelta, datetime
+
 from flask import (
     Flask, render_template, redirect, url_for,
     flash, request
@@ -11,6 +13,7 @@ from forms import (
 )
 from models import db, DogOwner, Dog, DogWalker, Availability
 
+MINIMUM_OVERLAP_MINUTES = 15
 
 def create_app():
     app = Flask(__name__, instance_relative_config=True)
@@ -23,11 +26,12 @@ def create_app():
     Migrate(app, db)
     return app
 
+
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host="192.168.129.2", port=5000, debug=True)
-    # app.run(debug=True)
+    app.debug = False
+    app.run(host="192.168.129.2", port=5000, debug=False)
 
 # ------------------------------------------------------------------ Routes ---
 
@@ -40,6 +44,7 @@ def home():
 @app.route("/owners")
 def owners():
     owners = DogOwner.query.order_by(DogOwner.name.asc()).all()
+    table_name = DogOwner.__tablename__
     return render_template("owners.html", owners=owners)
 
 
@@ -75,10 +80,12 @@ def delete_owner(owner_id):
     flash("Owner deleted successfully", "success")
     return redirect(url_for("owners"))
 
+
 # Dog CRUD
 @app.route("/dogs")
 def dogs():
     dogs = Dog.query.order_by(Dog.name.asc()).all()
+    table_name = Dog.__tablename__
     return render_template("dogs.html", dogs=dogs)
 
 
@@ -109,6 +116,7 @@ def edit_dog(dog_id):
         return redirect(url_for("dogs"))
     return render_template("dog_form.html", form=form)
 
+
 @app.route("/walkers/<int:walker_id>/delete", methods=["POST"])
 def delete_walker(walker_id):
     walker = DogWalker.query.get_or_404(walker_id)
@@ -116,6 +124,7 @@ def delete_walker(walker_id):
     db.session.commit()
     flash("Dog walker deleted successfully", "success")
     return redirect(url_for("walkers"))
+
 
 @app.route("/dogs/<int:dog_id>/delete", methods=["POST"])
 def delete_dog(dog_id):
@@ -130,6 +139,7 @@ def delete_dog(dog_id):
 @app.route("/walkers")
 def walkers():
     walkers = DogWalker.query.order_by(DogWalker.name.asc()).all()
+    table_name = DogWalker.__tablename__
     return render_template("walkers.html", walkers=walkers)
 
 
@@ -214,10 +224,27 @@ def delete_availability(availability_id):
     flash("Availability deleted successfully", "success")
     return redirect(request.referrer or url_for("home"))
 
+
 # Matching --------------------------------------------------------------------
 
 def overlaps(a_start, a_end, b_start, b_end):
-    return max(a_start, b_start) < min(a_end, b_end)
+    # Convert datetime.time objects to datetime.datetime objects for arithmetic
+    today = datetime.today()
+    a_start_dt = datetime.combine(today, a_start)
+    a_end_dt = datetime.combine(today, a_end)
+    b_start_dt = datetime.combine(today, b_start)
+    b_end_dt = datetime.combine(today, b_end)
+
+    # Determine overlap start and end times
+    overlap_start = max(a_start_dt, b_start_dt)
+    overlap_end = min(a_end_dt, b_end_dt)
+
+    # Calculate the overlap duration
+    overlap_duration = (overlap_end - overlap_start)
+
+    # Check of the overlap duration is at least the defined threshold
+    return overlap_duration >= timedelta(minutes=MINIMUM_OVERLAP_MINUTES)
+    # return max(a_start, b_start) < min(a_end, b_end)
 
 
 @app.route("/match")
