@@ -2,29 +2,22 @@
 {% extends "layout.html" %}
 {% block content %}
 <h2>Confirmed Matches</h2>
-{% if matches %}
+{% if confirmed_matches %}
 <table class="table table-striped table-centered">
     <thead>
     <tr>
-        <th colspan="6">Confirmed Matches</th>
+        <th colspan="2">Confirmed Matches 2</th>
     </tr>
     <tr>
-        <th>Dog (Breed, Owner (Phone))</th>
-        <th>Walker (Phone)</th>
-        <th>Day</th>
-        <th>Start</th>
-        <th>End</th>
-        <th>Actions</th>
+        <th>Dog</th>
+        <th>Walker</th>
     </tr>
     </thead>
     <tbody>
     {% for cm in confirmed_matches %}
     <tr>
-        <td>{{ cm.dog.name }}</td>
-        <td>{{ cm.walker.name }}</td>
-        <td>{{ ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][match.weekday] }}</td>
-        <td>{{ cm.start_time.strftime('%H:%M') }}</td>
-        <td>{{ cm.end_time.strftime('%H:%M') }}</td>
+        <td>{{ cm.field1 }}</td>
+        <td>{{ cm.field2 }}</td>
     </tr>
     {% endfor %}
     </tbody>
