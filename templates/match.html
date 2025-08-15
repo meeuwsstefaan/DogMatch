@@ -9,29 +9,21 @@
         <th colspan="6">Matches</th>
     </tr>
     <tr>
-        <th>Dog (Breed, Owner (Phone))</th>
+        <th>Dog (Breed)</th>
         <th>Walker (Phone)</th>
         <th>Day</th>
         <th>Start</th>
         <th>End</th>
-        <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     {% for match in matches %}
     <tr>
-        <td>{{ match.dog.name }}</td>
-        <td>{{ match.walker.name }}</td>
+        <td>{{ match.dog.name }} ({{ match.dog.breed }})</td>
+        <td>{{ match.walker.name }} ({{ match.walker.phone }})</td>
         <td>{{ ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][match.weekday] }}</td>
         <td>{{ match.start_time.strftime('%H:%M') }}</td>
         <td>{{ match.end_time.strftime('%H:%M') }}</td>
-        <td>
-            <form action="{{ url_for('confirm_match', match_id=match.id) }}" method="post" style="display:inline;">
-                <button type="submit" class="btn btn-success" onclick="return confirm('Confirm this match?');">
-                    Confirm
-                </button>
-            </form>
-        </td>
     </tr>
     {% endfor %}
     </tbody>

@@ -10,7 +10,7 @@ from forms import (
     OwnerForm, DogForm, WalkerForm,
     AvailabilityForm
 )
-from models import db, DogOwner, Dog, DogWalker, Availability, Matches, ConfirmedMatches
+from models import db, DogOwner, Dog, DogWalker, Availability, Matches
 
 MINIMUM_OVERLAP_MINUTES = 15
 
@@ -35,35 +35,6 @@ if __name__ == "__main__":
 
 
 # ------------------------------------------------------------------ Routes ---
-
-@app.route("/confirmed_matches", methods=["GET"])
-def confirmed_matches():
-    confirmed_matches = ConfirmedMatches.query.all()
-    return render_template("confirmed_matches.html", confirmed_matches=confirmed_matches)
-
-
-@app.route("/matches/<int:match_id>/confirm", methods=["POST"])
-def confirm_match(match_id):
-    match = Matches.query.get_or_404(match_id)  # Get the match to be confirmed
-    print(f"Match to confirm: {match.field1}, {match.field2}")  # Debugging print
-
-    # Re-add to the session if necessary (to avoid being detached)
-    db.session.add(match)
-
-    # Add it to the ConfirmedMatches table
-    confirmed_match = ConfirmedMatches(field1=match.field1, field2=match.field2)
-    db.session.add(confirmed_match)
-    print("Added to ConfirmedMatches table.")
-
-    # Remove from the Matches table
-    db.session.delete(match)
-    print(f"Match removed from Matches table: {match.field1}, {match.field2}")
-
-    db.session.commit()
-    print("Committed to DB.")
-
-    flash("Match confirmed and moved to Confirmed Matches table.", "success")
-    return redirect(url_for("match"))  # Redirect back to Matches view
 
 
 @app.route("/")
