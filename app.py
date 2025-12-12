@@ -29,10 +29,6 @@ def create_app():
 
 app = create_app()
 
-if __name__ == "__main__":
-    app.debug = False
-    app.run(host="192.168.129.2", port=5000, debug=False)
-
 
 # ------------------------------------------------------------------ Routes ---
 
@@ -289,3 +285,8 @@ def match():
     db.session.commit()  # Commit all matches to DB
     matches.sort(key=lambda x: x["dog"].name.lower())
     return render_template("match.html", matches=matches)
+
+
+if __name__ == "__main__":
+    app.debug = False
+    app.run(host="192.168.129.2", port=5000, debug=False)
