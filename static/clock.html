@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analog Clock with Gears</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --face: #0b2545;
+      --accent: #f4a261;
+      --hand: #e0fbfc;
+      --gear: #264653;
+      --gear-teeth: #2a9d8f;
+      --shadow: rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at 20% 20%, #1d3557, #0f172a 60%), radial-gradient(circle at 80% 80%, #0b2545, #0f172a 60%);
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 1rem;
+    }
+
+    .panel {
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(226, 232, 240, 0.15);
+      border-radius: 18px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 60px var(--shadow);
+      max-width: 780px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .heading {
+      margin: 0 0 0.25rem;
+      font-size: 1.8rem;
+      letter-spacing: 0.01em;
+    }
+
+    .subtext {
+      margin: 0;
+      color: #cbd5e1;
+    }
+
+    .clock-wrapper {
+      display: grid;
+      place-items: center;
+    }
+
+    .clock {
+      position: relative;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #1e3a8a, #0b2545 60%, #050c1c 100%);
+      box-shadow: inset 0 0 0 4px rgba(255, 255, 255, 0.05), inset 0 0 30px rgba(0, 0, 0, 0.6), 0 15px 40px var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .center-pin {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      z-index: 6;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .hand {
+      position: absolute;
+      bottom: 50%;
+      left: 50%;
+      transform-origin: 50% 100%;
+      transform: translateX(-50%) rotate(0deg);
+      border-radius: 6px;
+      box-shadow: 0 6px 12px var(--shadow);
+    }
+
+    .hand.hour {
+      width: 10px;
+      height: 95px;
+      background: linear-gradient(180deg, #f8f9fa 0%, #94a3b8 100%);
+      z-index: 4;
+    }
+
+    .hand.minute {
+      width: 8px;
+      height: 125px;
+      background: linear-gradient(180deg, #e0fbfc 0%, #a0aec0 100%);
+      z-index: 3;
+    }
+
+    .hand.second {
+      width: 4px;
+      height: 140px;
+      background: var(--accent);
+      z-index: 5;
+    }
+
+    .hand.second::after {
+      content: "";
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 28px;
+      background: var(--accent);
+      border-radius: 8px;
+      box-shadow: 0 4px 6px var(--shadow);
+    }
+
+    .tick {
+      position: absolute;
+      width: 4px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      top: 12px;
+      left: 50%;
+      transform-origin: center 148px;
+      border-radius: 999px;
+    }
+
+    .tick.major {
+      width: 6px;
+      height: 22px;
+      background: var(--accent);
+      top: 8px;
+    }
+
+    .gear {
+      position: absolute;
+      border-radius: 50%;
+      border: 8px solid var(--gear);
+      box-shadow: inset 0 0 0 6px var(--gear-teeth), inset 0 0 18px rgba(0, 0, 0, 0.35);
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0 45%, transparent 48% 100%);
+      animation: spin 20s linear infinite;
+      opacity: 0.9;
+    }
+
+    .gear::before, .gear::after {
+      content: "";
+      position: absolute;
+      inset: 8px;
+      border-radius: 50%;
+      border: 6px dashed rgba(226, 232, 240, 0.1);
+    }
+
+    .gear.small {
+      width: 110px;
+      height: 110px;
+      top: 14px;
+      right: 14px;
+      animation-duration: 12s;
+    }
+
+    .gear.medium {
+      width: 140px;
+      height: 140px;
+      bottom: 22px;
+      left: 18px;
+      animation-duration: 16s;
+      animation-direction: reverse;
+    }
+
+    .gear.large {
+      width: 170px;
+      height: 170px;
+      top: 18px;
+      left: 30px;
+      animation-duration: 24s;
+    }
+
+    .gear .spoke {
+      position: absolute;
+      width: 10px;
+      height: 100%;
+      background: rgba(148, 163, 184, 0.2);
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 4px;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.45);
+    }
+
+    .gear .spoke:nth-child(2) { transform: translateX(-50%) rotate(60deg); }
+    .gear .spoke:nth-child(3) { transform: translateX(-50%) rotate(120deg); }
+    .gear .spoke:nth-child(4) { transform: translateX(-50%) rotate(180deg); }
+    .gear .spoke:nth-child(5) { transform: translateX(-50%) rotate(240deg); }
+    .gear .spoke:nth-child(6) { transform: translateX(-50%) rotate(300deg); }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .readout {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      align-self: center;
+    }
+
+    .time-string {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .date-string {
+      color: #cbd5e1;
+      letter-spacing: 0.03em;
+    }
+
+    .legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(226, 232, 240, 0.12);
+      font-size: 0.95rem;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+
+    .dot.hour { background: linear-gradient(180deg, #f8f9fa 0%, #94a3b8 100%); }
+    .dot.minute { background: linear-gradient(180deg, #e0fbfc 0%, #a0aec0 100%); }
+    .dot.second { background: var(--accent); }
+    .dot.gear { background: var(--gear-teeth); }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <div class="clock-wrapper">
+      <div class="clock" aria-label="Analog clock showing the current local time">
+        <div class="gear small">
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+        </div>
+        <div class="gear medium">
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+        </div>
+        <div class="gear large">
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+          <div class="spoke"></div><div class="spoke"></div><div class="spoke"></div>
+        </div>
+
+        <div class="hand hour" id="hour-hand"></div>
+        <div class="hand minute" id="minute-hand"></div>
+        <div class="hand second" id="second-hand"></div>
+        <div class="center-pin"></div>
+      </div>
+    </div>
+    <div class="readout">
+      <h1 class="heading">Local Time</h1>
+      <p class="subtext">Analog clock with synchronized gearwork and precise hands.</p>
+      <div class="time-string" id="time-string">--:--:--</div>
+      <div class="date-string" id="date-string">--</div>
+      <div class="legend">
+        <div class="pill"><span class="dot hour"></span>Hour hand</div>
+        <div class="pill"><span class="dot minute"></span>Minute hand</div>
+        <div class="pill"><span class="dot second"></span>Seconds hand</div>
+        <div class="pill"><span class="dot gear"></span>Visible gears continuously turning</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hourHand = document.getElementById('hour-hand');
+    const minuteHand = document.getElementById('minute-hand');
+    const secondHand = document.getElementById('second-hand');
+    const timeString = document.getElementById('time-string');
+    const dateString = document.getElementById('date-string');
+
+    function pad(value) {
+      return value.toString().padStart(2, '0');
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const seconds = now.getSeconds() + now.getMilliseconds() / 1000;
+      const minutes = now.getMinutes() + seconds / 60;
+      const hours = now.getHours() % 12 + minutes / 60;
+
+      const secondDeg = seconds * 6;
+      const minuteDeg = minutes * 6;
+      const hourDeg = hours * 30;
+
+      secondHand.style.transform = `translateX(-50%) rotate(${secondDeg}deg)`;
+      minuteHand.style.transform = `translateX(-50%) rotate(${minuteDeg}deg)`;
+      hourHand.style.transform = `translateX(-50%) rotate(${hourDeg}deg)`;
+
+      timeString.textContent = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(Math.floor(seconds))}`;
+      dateString.textContent = now.toLocaleString(undefined, {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    }
+
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
